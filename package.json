@@ -15,8 +15,8 @@
     "vite": "^5.0.0",
     "@vitejs/plugin-react": "^4.2.1",
     "tailwindcss": "^4.3.2",
-    "@tailwindcss/postcss7-compat": "^4.3.2",
+    "@tailwindcss/postcss": "^2.0.0",
     "postcss": "^8.4.24",
-   "autoprefixer": "^10.4.14"
+    "autoprefixer": "^10.4.14"
   }
 }
