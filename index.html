@@ -1,1 +1,292 @@
+<!doctype html>
 
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Church Chat — Starter</title>
+  <!-- Tailwind CDN (for quick zero-config prototyping) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+  <style>
+    /* small nice touches */
+    body { background: linear-gradient(180deg,#f8fafc 0%, #ffffff 60%);} 
+    .glass { background: rgba(255,255,255,0.7); backdrop-filter: blur(6px);} 
+  </style>
+</head>
+<body class="min-h-screen text-slate-800">
+  <header class="p-6 shadow-sm glass">
+    <div class="max-w-6xl mx-auto flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-full bg-green-600 flex items-center justify-center text-white font-bold">CC</div>
+        <div>
+          <h1 class="text-2xl font-semibold">Church Chat</h1>
+          <p class="text-sm text-slate-600">Interactive church community (starter)</p>
+        </div>
+      </div>
+      <nav class="hidden md:flex gap-4 items-center">
+        <a href="#home" class="text-slate-700 hover:underline">Home</a>
+        <a href="#departments" class="text-slate-700 hover:underline">Departments</a>
+        <a href="#chat" class="text-slate-700 hover:underline">Chat</a>
+        <a href="#data" class="text-slate-700 hover:underline">Data</a>
+        <a href="#visuals" class="text-slate-700 hover:underline">Visuals</a>
+      </nav>
+    </div>
+  </header>  <main class="max-w-6xl mx-auto p-6 grid gap-8">
+    <!-- HOME -->
+    <section id="home" class="grid gap-4">
+      <div class="p-6 rounded-2xl glass shadow">
+        <h2 class="text-2xl font-semibold">Welcome to Church Chat</h2>
+        <p class="text-slate-600 mt-2">This is a zero-cost, single-file starter site. Data is stored as downloadable CSVs and in browser localStorage. Use the navigation above to jump between pages.</p>
+      </div>
+    </section><!-- DEPARTMENTS -->
+<section id="departments" class="grid gap-4">
+  <h3 class="text-xl font-semibold">Departments</h3>
+  <div class="grid gap-4 md:grid-cols-3">
+    <!-- cards for departments -->
+    <template id="dept-card-tpl">
+      <div class="p-4 rounded-xl shadow glass">
+        <h4 class="font-semibold">{{name}}</h4>
+        <p class="text-sm text-slate-600 mt-1">Members: <span class="members-count">0</span></p>
+        <div class="mt-3 flex gap-2">
+          <button class="open-dept px-3 py-1 rounded bg-green-600 text-white text-sm">Open</button>
+          <button class="export-dept px-3 py-1 rounded border text-sm">Export CSV</button>
+        </div>
+      </div>
+    </template>
+  </div>
+</section>
+
+<!-- CHAT -->
+<section id="chat" class="grid gap-4">
+  <h3 class="text-xl font-semibold">Chat</h3>
+  <div class="grid md:grid-cols-3 gap-4">
+    <div class="md:col-span-2 p-4 rounded-xl glass shadow">
+      <div id="messages" class="h-64 overflow-auto p-2 space-y-2 border rounded-md bg-white"></div>
+      <form id="chat-form" class="mt-3 flex gap-2">
+        <select id="dept-select" class="px-3 py-2 rounded border">
+          <option value="Ladies">Ladies</option>
+          <option value="Gents">Gents</option>
+          <option value="Service">Service</option>
+          <option value="Youth">Youth Fellowship</option>
+          <option value="Charity">Charity</option>
+          <option value="Choral">Choral</option>
+          <option value="Common">Common</option>
+        </select>
+        <input id="username" placeholder="Your name" class="flex-1 px-3 py-2 rounded border" required />
+        <input id="message" placeholder="Type a message" class="flex-2 px-3 py-2 rounded border" required />
+        <button class="px-3 py-2 rounded bg-blue-600 text-white">Send</button>
+      </form>
+      <div class="mt-3 flex gap-2">
+        <button id="download-chat" class="px-3 py-2 rounded border">Download Chat CSV</button>
+        <button id="clear-chat" class="px-3 py-2 rounded border">Clear (local)</button>
+      </div>
+    </div>
+
+    <div class="p-4 rounded-xl glass shadow">
+      <h4 class="font-semibold">Quick activity</h4>
+      <p class="text-sm text-slate-600 mt-2">Upload a CSV of members (columns: name,email,department,joined_on) to update counts.</p>
+      <input id="file-members" type="file" accept=".csv" class="mt-2" />
+      <div class="mt-3">
+        <button id="download-members-template" class="px-3 py-2 rounded border">Download Template</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DATA -->
+<section id="data" class="grid gap-4">
+  <h3 class="text-xl font-semibold">Data (CSV viewer & uploader)</h3>
+  <div class="p-4 rounded-xl glass shadow">
+    <div class="flex gap-2 items-center">
+      <input id="file-csv" type="file" accept=".csv" />
+      <button id="export-csv" class="px-3 py-2 rounded border">Export last table as CSV</button>
+    </div>
+    <div id="csv-table" class="mt-4 overflow-auto max-h-64"></div>
+  </div>
+</section>
+
+<!-- VISUALIZATIONS -->
+<section id="visuals" class="grid gap-4">
+  <h3 class="text-xl font-semibold">Visualizations</h3>
+  <div class="grid md:grid-cols-2 gap-4">
+    <div class="p-4 rounded-xl glass shadow">
+      <h4 class="font-semibold">Participants by Department (pie)</h4>
+      <canvas id="chart-dept" height="200"></canvas>
+    </div>
+    <div class="p-4 rounded-xl glass shadow">
+      <h4 class="font-semibold">Attendance over time (example)</h4>
+      <canvas id="chart-attend" height="200"></canvas>
+    </div>
+  </div>
+</section>
+
+<footer class="p-6 text-center text-sm text-slate-600">
+  Built with ❤ — Starter template for Church Chat. Save this file as <code>index.html</code> and deploy to GitHub Pages / Netlify.
+</footer>
+
+  </main>  <script>
+    // ======= Tiny in-browser "CSV database" and UI wiring =======
+    const DEPARTMENTS = ["Ladies","Gents","Service","Youth Fellowship","Charity","Choral","Common"];
+
+    // utility to download CSV text
+    function downloadFile(filename, text) {
+      const a = document.createElement('a');
+      const blob = new Blob([text], { type: 'text/csv' });
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    // ======= Departments cards =======
+    function renderDepartmentCards(members=[]) {
+      const tpl = document.querySelector('#dept-card-tpl').innerHTML;
+      const parent = document.querySelector('#departments > div.grid');
+      parent.innerHTML = '';
+      DEPARTMENTS.forEach(name => {
+        const html = tpl.replace('{{name}}', name);
+        const div = document.createElement('div');
+        div.innerHTML = html;
+        const card = div.firstElementChild;
+        const count = members.filter(m => (m.department||'').toLowerCase() === name.toLowerCase()).length;
+        card.querySelector('.members-count').textContent = count;
+        card.querySelector('.open-dept').addEventListener('click', () => openDept(name, members));
+        card.querySelector('.export-dept').addEventListener('click', () => exportDeptCSV(name, members));
+        parent.appendChild(card);
+      });
+    }
+
+    function openDept(name, members) {
+      const list = members.filter(m => (m.department||'').toLowerCase() === name.toLowerCase());
+      const csv = Papa.unparse(list);
+      alert(`${name} members: ${list.length} (CSV exported to download)`);
+      downloadFile(`${name.replace(/\s+/g,'_')}_members.csv`, csv);
+    }
+    function exportDeptCSV(name, members) { openDept(name,members); }
+
+    // ======= Members CSV upload handling =======
+    let membersData = JSON.parse(localStorage.getItem('membersData')||'[]');
+    document.getElementById('file-members').addEventListener('change', (e) => {
+      const f = e.target.files[0];
+      if (!f) return;
+      Papa.parse(f, { header: true, skipEmptyLines: true, complete(results){
+        membersData = results.data.map(r => ({
+          name: r.name || r.Name || '',
+          email: r.email || r.Email || '',
+          department: r.department || r.Department || '',
+          joined_on: r.joined_on || r.Joined_On || ''
+        }));
+        localStorage.setItem('membersData', JSON.stringify(membersData));
+        renderDepartmentCards(membersData);
+        alert('Members CSV loaded. Department counts updated.');
+      }});
+    });
+
+    document.getElementById('download-members-template').addEventListener('click', () => {
+      const sample = 'name,email,department,joined_on\nJohn Doe,john@example.com,Ladies,2024-01-01\n';
+      downloadFile('members-template.csv', sample);
+    });
+
+    // ======= Chat logic (stored in localStorage) =======
+    let chatLog = JSON.parse(localStorage.getItem('chatLog')||'[]');
+    const messagesEl = document.getElementById('messages');
+    function renderMessages(){
+      messagesEl.innerHTML = '';
+      chatLog.slice(-200).forEach(m => {
+        const el = document.createElement('div');
+        el.className = 'p-2 rounded border bg-white';
+        el.innerHTML = `<div class="text-sm text-slate-600">${m.department} • <strong>${m.username}</strong> <span class="text-xs text-slate-400">${m.time}</span></div><div class="mt-1">${escapeHtml(m.message)}</div>`;
+        messagesEl.appendChild(el);
+      });
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+    function escapeHtml(s){ return (s+'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    document.getElementById('chat-form').addEventListener('submit', (ev) => {
+      ev.preventDefault();
+      const username = document.getElementById('username').value.trim();
+      const message = document.getElementById('message').value.trim();
+      const department = document.getElementById('dept-select').value;
+      if (!username || !message) return;
+      const entry = { username, message, department, time: new Date().toLocaleString() };
+      chatLog.push(entry);
+      localStorage.setItem('chatLog', JSON.stringify(chatLog));
+      document.getElementById('message').value = '';
+      renderMessages();
+    });
+
+    document.getElementById('download-chat').addEventListener('click', () => {
+      const csv = Papa.unparse(chatLog);
+      downloadFile('chat_export.csv', csv);
+    });
+
+    document.getElementById('clear-chat').addEventListener('click', () => {
+      if (!confirm('Clear chat locally? This will remove localStorage chat only.')) return;
+      chatLog = []; localStorage.removeItem('chatLog'); renderMessages();
+    });
+
+    // ======= CSV table viewer =======
+    let lastLoadedTable = { columns: [], rows: [] };
+    document.getElementById('file-csv').addEventListener('change', (e) => {
+      const f = e.target.files[0]; if (!f) return;
+      Papa.parse(f, { header: true, skipEmptyLines: true, complete(results){
+        lastLoadedTable.columns = results.meta.fields || Object.keys(results.data[0]||{});
+        lastLoadedTable.rows = results.data;
+        renderCsvTable();
+      }});
+    });
+    function renderCsvTable(){
+      const wrap = document.getElementById('csv-table'); wrap.innerHTML = '';
+      if (!lastLoadedTable.rows.length){ wrap.textContent = 'No table loaded'; return; }
+      const table = document.createElement('table'); table.className='w-full table-auto border-collapse';
+      const thead = document.createElement('thead'); const trh = document.createElement('tr');
+      lastLoadedTable.columns.forEach(c => { const th = document.createElement('th'); th.className='border p-2 text-left bg-slate-50'; th.textContent=c; trh.appendChild(th)});
+      thead.appendChild(trh); table.appendChild(thead);
+      const tbody = document.createElement('tbody'); lastLoadedTable.rows.forEach(r => {
+        const tr = document.createElement('tr'); lastLoadedTable.columns.forEach(c => { const td = document.createElement('td'); td.className='border p-2 text-sm'; td.textContent = r[c] || ''; tr.appendChild(td) }); tbody.appendChild(tr);
+      }); table.appendChild(tbody); wrap.appendChild(table);
+    }
+    document.getElementById('export-csv').addEventListener('click', () => {
+      if (!lastLoadedTable.rows.length) return alert('No table loaded');
+      const csv = Papa.unparse(lastLoadedTable.rows);
+      downloadFile('export_table.csv', csv);
+    });
+
+    // ======= Charts (example, read from membersData and chatLog) =======
+    const ctxDept = document.getElementById('chart-dept').getContext('2d');
+    const ctxAttend = document.getElementById('chart-attend').getContext('2d');
+    let chartDept, chartAttend;
+    function renderCharts(){
+      const counts = DEPARTMENTS.map(d => membersData.filter(m => (m.department||'').toLowerCase() === d.toLowerCase()).length);
+      if (chartDept) chartDept.destroy();
+      chartDept = new Chart(ctxDept, { type:'pie', data:{ labels: DEPARTMENTS, datasets:[{ data:counts }] }, options:{ responsive:true } });
+
+      // attendance example: aggregate chat messages per day for last 30 days
+      const days = {}; chatLog.forEach(c=>{ const d = (new Date(c.time)).toISOString().slice(0,10); days[d] = (days[d]||0)+1; });
+      const sortedKeys = Object.keys(days).sort();
+      if (chartAttend) chartAttend.destroy();
+      chartAttend = new Chart(ctxAttend, { type:'line', data:{ labels: sortedKeys, datasets:[{ label:'Chat activity', data: sortedKeys.map(k=>days[k]) }] }, options:{ responsive:true } });
+    }
+
+    // initial render
+    renderDepartmentCards(membersData);
+    renderMessages();
+    renderCharts();
+
+    // Re-render charts periodically (or after key actions)
+    setInterval(() => { membersData = JSON.parse(localStorage.getItem('membersData')||'[]'); chatLog = JSON.parse(localStorage.getItem('chatLog')||'[]'); renderDepartmentCards(membersData); renderCharts(); }, 2000);
+
+    // safety: small polyfill for Date parse differences in some browsers
+    // helper: preload some demo sample if nothing exists
+    if (!membersData.length){ membersData = [
+      {name:'Anna',email:'anna@example.com',department:'Ladies',joined_on:'2024-01-01'},
+      {name:'Peter',email:'peter@example.com',department:'Gents',joined_on:'2023-03-11'},
+      {name:'Choir1',email:'choir@example.com',department:'Choral',joined_on:'2022-05-04'}
+    ]; localStorage.setItem('membersData', JSON.stringify(membersData)); renderDepartmentCards(membersData); }
+    if (!chatLog.length){ chatLog = [{username:'System',message:'Welcome to Church Chat!','department':'Common',time:new Date().toLocaleString()}]; localStorage.setItem('chatLog', JSON.stringify(chatLog)); renderMessages(); }
+  </script></body>
+</html>
