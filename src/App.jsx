@@ -7,8 +7,8 @@ import Visuals from './pages/Visuals'
 // Department Pages
 import Ladies from './pages/departments/Ladies'
 import Youth from './pages/departments/Youth'
-import Brothers from './pages/departments/Brothers'
-import ServiceTeam from './pages/departments/ServiceTeam'
+import Brothers from './pages/departments/Brother'
+import ServiceTeam from './pages/departments/Service'
 import SundaySchool from './pages/departments/SundaySchool'
 import Church from './pages/departments/Church'
 
@@ -50,8 +50,8 @@ export default function App() {
         {/* Department-specific routes */}
         {route === 'ladies' && <Ladies />}
         {route === 'youth' && <Youth />}
-        {route === 'brothers' && <Brothers />}
-        {route === 'serviceteam' && <ServiceTeam />}
+        {route === 'brother' && <Brother />}
+        {route === 'service' && <Service />}
         {route === 'sundayschool' && <SundaySchool />}
         {route === 'church' && <Church />}
       </main>
