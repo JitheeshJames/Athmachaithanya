@@ -1,53 +1,28 @@
-// src/pages/Departments.jsx
-import { Link } from "react-router-dom";
+import React from "react";
 
 const departments = [
-  {
-    name: "Ladies Department",
-    path: "/departments/ladies",
-    description: "Focusing on women’s spiritual growth, service, and charity activities.",
-  },
-  {
-    name: "Youth Department",
-    path: "/departments/youth",
-    description: "Encouraging young members in leadership, worship, and community service.",
-  },
-  {
-    name: "Brothers Department",
-    path: "/departments/brothers",
-    description: "Engaging men of the church in charity, support, and prayer activities.",
-  },
-  {
-    name: "Service Team",
-    path: "/departments/service",
-    description: "The backbone team supporting church events and charity operations.",
-  },
-  {
-    name: "Sunday School",
-    path: "/departments/sunday-school",
-    description: "Guiding children in faith, values, and community service.",
-  },
-  {
-    name: "Church Department",
-    path: "/departments/church",
-    description: "Main administration, events, and overall operations of Athmachaithanya.",
-  },
+  { id: "ladies", name: "Ladies", desc: "Empowering women through prayer, charity, and fellowship." },
+  { id: "youth", name: "Youth", desc: "Building strong faith and leadership among the youth." },
+  { id: "brothers", name: "Brothers", desc: "Men’s fellowship focused on service and spiritual growth." },
+  { id: "serviceteam", name: "Service Team", desc: "Assisting church functions, events, and services." },
+  { id: "sundayschool", name: "Sunday School", desc: "Nurturing children with Biblical values and teachings." },
+  { id: "church", name: "Church", desc: "Main church body overseeing all activities and worship." },
 ];
 
 export default function Departments() {
   return (
-    <div className="p-8 bg-gray-50 min-h-screen">
-      <h1 className="text-4xl font-bold text-center mb-8">Our Departments</h1>
-      <div className="grid md:grid-cols-3 gap-6">
-        {departments.map((dept) => (
-          <Link
-            key={dept.name}
-            to={dept.path}
-            className="block p-6 bg-white rounded-xl shadow hover:shadow-lg transition duration-300"
+    <div className="p-6">
+      <h1 className="text-3xl font-bold mb-6">Departments</h1>
+      <div className="grid md:grid-cols-2 gap-6">
+        {departments.map((d) => (
+          <a
+            key={d.id}
+            href={`#${d.id}`}
+            className="p-6 bg-white rounded-xl shadow hover:shadow-lg transition"
           >
-            <h2 className="text-xl font-semibold mb-2">{dept.name}</h2>
-            <p className="text-gray-600">{dept.description}</p>
-          </Link>
+            <h2 className="text-xl font-semibold mb-2">{d.name}</h2>
+            <p className="text-gray-600">{d.desc}</p>
+          </a>
         ))}
       </div>
     </div>
