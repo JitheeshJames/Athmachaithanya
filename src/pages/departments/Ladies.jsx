@@ -1,49 +1,80 @@
-export default function Ladies() {
-  return (
-    <div className="p-8 bg-white min-h-screen">
-      <h1 className="text-3xl font-bold mb-4">Ladies Department</h1>
-      <p className="mb-6 text-gray-700">
-        The Ladies Department focuses on empowering women through prayer meetings,
-        charity initiatives, and fellowship programs.
-      </p>
+import { useState, useEffect } from "react";
+import Papa from "papaparse";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 
-      <section className="mb-6">
-        <h2 className="text-xl font-semibold mb-2">Committee Members</h2>
-        <ul className="list-disc pl-6 text-gray-600">
+export default function Ladies() {
+  const [activeTab, setActiveTab] = useState("overview");
+  const [funds, setFunds] = useState([]);
+
+  useEffect(() => {
+    Papa.parse("/sample-data/ladies_funds.csv", {
+      download: true,
+      header: true,
+      complete: (res) => setFunds(res.data),
+    });
+  }, []);
+
+  const tabs = ["overview", "members", "funds", "activities"];
+
+  return (
+    <div className="p-8 bg-gray-50 min-h-screen">
+      <h1 className="text-3xl font-bold mb-6">Ladies Department</h1>
+
+      {/* Tabs */}
+      <div className="flex gap-4 mb-6 border-b">
+        {tabs.map((tab) => (
+          <button
+            key={tab}
+            className={`px-4 py-2 font-medium ${
+              activeTab === tab
+                ? "border-b-2 border-blue-600 text-blue-600"
+                : "text-gray-500 hover:text-blue-600"
+            }`}
+            onClick={() => setActiveTab(tab)}
+          >
+            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+          </button>
+        ))}
+      </div>
+
+      {/* Content */}
+      {activeTab === "overview" && (
+        <p className="text-gray-700">
+          The Ladies Department focuses on empowering women through prayer
+          meetings, charity initiatives, and fellowship programs.
+        </p>
+      )}
+
+      {activeTab === "members" && (
+        <ul className="list-disc pl-6 text-gray-700">
           <li>Mary Joseph – President</li>
           <li>Annie Mathew – Secretary</li>
           <li>Leena Varghese – Treasurer</li>
         </ul>
-      </section>
+      )}
 
-      <section className="mb-6">
-        <h2 className="text-xl font-semibold mb-2">Fund Details</h2>
-        <table className="w-full border border-gray-300">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="p-2 border">Date</th>
-              <th className="p-2 border">Income</th>
-              <th className="p-2 border">Expense</th>
-              <th className="p-2 border">Balance</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td className="p-2 border">01-Sep-2025</td>
-              <td className="p-2 border">₹10,000</td>
-              <td className="p-2 border">₹3,000</td>
-              <td className="p-2 border">₹7,000</td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
+      {activeTab === "funds" && (
+        <div className="w-full h-64">
+          <ResponsiveContainer>
+            <BarChart data={funds}>
+              <XAxis dataKey="date" />
+              <YAxis />
+              <Tooltip />
+              <Bar dataKey="amount" fill="#4F46E5" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      )}
 
-      <section>
-        <h2 className="text-xl font-semibold mb-2">Activities & Updates</h2>
-        <p className="text-gray-700">
-          Weekly prayer meetings, charity visits, and community outreach programs.
-        </p>
-      </section>
+      {activeTab === "activities" && (
+        <div>
+          <h2 className="text-xl font-semibold mb-2">Upcoming Activities</h2>
+          <p className="text-gray-700">
+            Weekly prayer meetings, charity visits, and community outreach
+            programs.
+          </p>
+        </div>
+      )}
     </div>
   );
 }
