@@ -1,0 +1,55 @@
+{
+  "Ladies": {
+    "description": "The Ladies department is dedicated to empowering women in church and community activities.",
+    "members": ["Alice Mathew", "Beena Joseph", "Christina Varghese"],
+    "committee": ["President: Alice", "Secretary: Beena", "Treasurer: Christina"],
+    "funds": [
+      { "month": "January", "income": 12000, "expense": 5000 },
+      { "month": "February", "income": 15000, "expense": 6000 }
+    ],
+    "activities": [
+      "Weekly prayer meetings",
+      "Charity drives for underprivileged women"
+    ]
+  },
+  "Brothers": {
+    "description": "The Brothers department focuses on supporting spiritual growth and church maintenance.",
+    "members": ["David", "John", "Samuel"],
+    "committee": ["President: David", "Secretary: John", "Treasurer: Samuel"],
+    "funds": [
+      { "month": "January", "income": 10000, "expense": 4000 },
+      { "month": "February", "income": 12000, "expense": 7000 }
+    ],
+    "activities": ["Church cleaning drives", "Bible study groups"]
+  },
+  "Youth": {
+    "description": "The Youth department nurtures young people through faith-building and community engagement.",
+    "members": ["Anu", "Rahul", "Joseph"],
+    "committee": ["President: Anu", "Secretary: Rahul", "Treasurer: Joseph"],
+    "funds": [
+      { "month": "January", "income": 8000, "expense": 3000 },
+      { "month": "February", "income": 9500, "expense": 3500 }
+    ],
+    "activities": ["Music ministry", "Youth camps"]
+  },
+  "ServiceTeam": {
+    "description": "The Service Team provides assistance in church services and helps with community needs.",
+    "members": ["Sijo", "Thomas", "Manu"],
+    "committee": ["President: Sijo", "Secretary: Thomas", "Treasurer: Manu"],
+    "funds": [
+      { "month": "January", "income": 7000, "expense": 2000 },
+      { "month": "February", "income": 8500, "expense": 2500 }
+    ],
+    "activities": ["Volunteer programs", "Food distribution"]
+  },
+  "SundaySchool": {
+    "description": "Sunday School nurtures children with Bible lessons and moral values.",
+    "members": ["Kids Group A", "Kids Group B"],
+    "committee": ["Principal: Mary", "Vice Principal: Jacob"],
+    "funds": [
+      { "month": "January", "income": 5000, "expense": 2000 },
+      { "month": "February", "income": 6000, "expense": 2500 }
+    ],
+    "activities": ["Weekly Bible classes", "Annual competitions"]
+  }
+}
