@@ -9,7 +9,7 @@ export default function DepartmentDetail({ deptName }) {
   const [activities, setActivities] = useState([]);
 
   useEffect(() => {
-    const basePath = `/sample-data/${deptName}/`;
+    const basePath = `/pages/department/${deptName}/`;
     const loadCsv = async (file, setter) => {
       const res = await fetch(basePath + file);
       const text = await res.text();
